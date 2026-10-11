@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2ff;
+            padding: 20px;
+            color: #1e293b;
+        }
+        main {
+            max-width: 550px;
+            margin: 30px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+        }
+        label {
+            display: block;
+            margin-top: 16px;
+        }
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px 18px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        a {
+            margin-left: 12px;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Edit Application</h1>
+
+    <form method="POST"
+          action="{{ url_for('edit', application_id=application['id']) }}">
+        <label for="company">Company name</label>
+        <input id="company" name="company"
+               value="{{ application['company'] }}" required>
+
+        <label for="role">Job role</label>
+        <input id="role" name="role"
+               value="{{ application['role'] }}" required>
+
+        <label for="date">Application date</label>
+        <input id="date" name="application_date" type="date"
+               value="{{ application['application_date'] }}" required>
+
+        <button type="submit">Save Changes</button>
+        <a href="{{ url_for('home') }}">Cancel</a>
+    </form>
+</main>
+</body>
+</html>

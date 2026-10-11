@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Placement Tracker</title>
+    <style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 24px;
+        font-family: Arial, sans-serif;
+        color: #1e293b;
+        background: #eef2ff;
+    }
+
+    main {
+        max-width: 750px;
+        margin: 20px auto;
+        padding: 32px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(30, 41, 59, 0.1);
+    }
+
+    h1 {
+        margin-top: 0;
+        color: #2563eb;
+        font-size: 30px;
+    }
+
+    h2 {
+        margin-top: 28px;
+        font-size: 22px;
+    }
+
+    label {
+        display: block;
+        margin-top: 16px;
+        font-weight: bold;
+    }
+
+    input, select {
+        width: 100%;
+        margin-top: 8px;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: white;
+        font: inherit;
+    }
+
+    input:focus, select:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+    }
+
+    button {
+        margin-top: 12px;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        font: inherit;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #1d4ed8;
+    }
+
+    a {
+        display: inline-block;
+        margin-left: 12px;
+        color: #2563eb;
+    }
+
+    hr {
+        margin: 24px 0;
+        border: none;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            padding: 12px;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 25px;
+        }
+    }
+</style>
+</head>
+<body>
+<main>
+    <h1>Placement Application Tracker</h1>
+    <p>Add your job application details.</p>
+    <section style="background: #eff6ff; padding: 20px;
+                border-radius: 12px; margin-top: 20px;">
+    <h2 style="margin-top: 0;">Dashboard</h2>
+    <p><strong>Total Applications:</strong> {{ total }}</p>
+    <p>Applied: {{ counts.get("Applied", 0) }}</p>
+    <p>Interview Scheduled:
+        {{ counts.get("Interview Scheduled", 0) }}</p>
+    <p>Selected: {{ counts.get("Selected", 0) }}</p>
+    <p>Rejected: {{ counts.get("Rejected", 0) }}</p>
+</section>
+<hr>
+
+    <form method="POST" action="{{ url_for('add') }}">
+        <label for="company">Company name</label>
+        <input id="company" name="company" required>
+
+        <label for="role">Job role</label>
+        <input id="role" name="role" required>
+
+        <label for="date">Application date</label>
+        <input id="date" name="application_date"
+               type="date" required>
+
+        <label for="status">Status</label>
+        <select id="status" name="status">
+            <option>Applied</option>
+            <option>Interview Scheduled</option>
+            <option>Selected</option>
+            <option>Rejected</option>
+        </select>
+
+        <button type="submit">Save Application</button>
+    </form>
+
+    <hr>
+    <h2>Saved Applications</h2>
+    <form method="GET" action="{{ url_for('home') }}">
+    <label for="search">Search company</label>
+    <input id="search" name="search"
+           placeholder="Enter company name"
+           value="{{ search }}">
+           <label for="filter_status">Filter by status</label>
+<select id="filter_status" name="filter_status">
+    <option value="">All statuses</option>
+    {% for status in statuses %}
+        <option value="{{ status }}"
+                {% if selected_status == status %}selected{% endif %}>
+            {{ status }}
+        </option>
+    {% endfor %}
+</select>
+    <button type="submit">Search</button>
+    <a href="{{ url_for('home') }}">Show all</a>
+</form>
+
+    {% for application in applications %}
+        <div>
+            <strong>{{ application["company"] }}</strong>
+            <p>Role: {{ application["role"] }}</p>
+            <p>Date: {{ application["application_date"] }}</p>
+            <p>Status: {{ application["status"] }}</p>
+            <a href="{{ url_for('edit', application_id=application['id']) }}">
+    Edit Details
+</a>
+            <form method="POST"
+      action="{{ url_for('update_status', application_id=application['id']) }}">
+    <select name="status">
+        {% for status in ["Applied", "Interview Scheduled", "Selected", "Rejected"] %}
+            <option value="{{ status }}"
+                    {% if application["status"] == status %}selected{% endif %}>
+                {{ status }}
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit">Update Status</button>
+</form>
+
+
+            <form method="POST"
+                  action="{{ url_for('delete', application_id=application['id']) }}">
+                <button type="submit"
+                        onclick="return confirm('Delete this application?');">
+                    Delete
+                </button>
+            </form>
+            <hr>
+        </div>
+    {% else %}
+        <p>No applications found.</p>
+    {% endfor %}
+</main>
+</body>
+</html>
